@@ -1,42 +1,24 @@
 <!DOCTYPE html>
 <head>
+    <script 
+    src="script.js"
+    ></script>
   <title>Hard</title>
 </head>
 <body id = "body">
-<script>
 
-let array = [
-    {x: 0, y: 20, name: "Kuku"},
-    {x: 7, y: 1, name: "Piu"},
-    {x: 90, y: 32, name: "Lala"},
-    {x: 0, y: 0, name: "Vau"},
-];
+    <!-- <div class="rectangle" id="rectangle"></div> -->
 
-function getWay() {
-    let arr = [];
-    let odin = 0;
-    while(odin < array.length){
-        let dva = 0;
-        while(dva < array.length){
-            if(odin !== dva){
-                arr.push({way: searcHypotenuse(array[odin].x, array[odin].y, array[dva].x, array[dva].y), path: array[odin].name + " " + array[dva].name})
-            }
-            dva++;
-        };
-    odin++;
-    }
-    arr.sort((prev, next) => prev.way - next.way);
-    if(arr[0].way > 10) return null
-    return arr[0]
-}
-
-searcHypotenuse = (firstX, firstY, secondX, secondY) => {
-    let x = secondX - firstX;
-    let y = secondY - firstY;
-    let resultInQuad = x * x + y * y;
-    let result = Math.sqrt(resultInQuad);
-    return result;
-}
-
-</script>
 </body>
+<style>
+.rectangle{
+    position:absolute;
+    top:40%;
+    left:40%;
+    width: 600px;
+    height: 350px;
+    border: 1px solid red;
+    padding: 10px
+
+}
+</style>
