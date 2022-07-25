@@ -12,10 +12,11 @@ var nodes = [];
 function getWay(fromName, toWay) {
     allEdges = iteratingOverPaths(rawArray)
     rawArray.forEach((item) => {
-        nodes.push({name: item.name, neighborNames: (searchAllNeighbors(item.name)), shortestWay: Infinity})
+        nodes.push({name: item.name, neighborNames: (searchAllNeighbors(item.name)), shortestWay: Infinity, edgeOfThePath: null})
     })
     console.log(nodes)
     console.log(allEdges)
+    if(!getNodeByName(toWay)) return null;
     let activeNode = getNodeByName(fromName);
     activeNode.shortestWay = 0;
     let allNodes = [ ...nodes];
@@ -27,7 +28,10 @@ function getWay(fromName, toWay) {
         visitedWay.push(activeNode.name);
         activeNode = getLowestNode(nodes, visitedWay);
     };
-    console.log('nodes > ', allNodes);
+    if(getNodeByName(toWay).shortestWay === Infinity) return null
+    const resultArray = findingTheRightPath(allNodes, fromName, toWay);
+    const result = {wayLength: getNodeByName(toWay).shortestWay, path: resultArray};
+    console.log(result)
 };
 
 function getUpdatedAllNodes(nextNodes, nodes) {
@@ -44,7 +48,6 @@ function getNeighborEdges(fromName, nodes, edges){
             && nodes[index].neighborNames.filter((n) => n === item.to).length;
     });
     neighborNodes.sort((a, b) => a.way - b.way);
-    // console.log(neighborNodes)
     return neighborNodes;
 };
 
@@ -55,18 +58,18 @@ function getNeighborNodes(fromName, nodes, edges) {
             if(neighbor.name === neighborEdges.to) neighborNodes.push(neighbor);
         }));
     });
-    // console.log(neighborNodes)
     return neighborNodes;
 }
 
 
 function updateCost(neighborEdges, aNode, neighborNodes){
-// обновление стоимости
     let nextNodes = [];
     neighborNodes.forEach((noda) => {
-        let newMount = aNode.shortestWay + getLengthFromTo(aNode, noda, neighborEdges);
+        let informationAboutTheNewEdge = getLengthFromTo(aNode, noda, neighborEdges);
+        let newMount = aNode.shortestWay + informationAboutTheNewEdge.pathLength
         if(noda.shortestWay > newMount ) {
             noda.shortestWay = newMount;
+            noda.edgeOfThePath = {from: informationAboutTheNewEdge.from, to: informationAboutTheNewEdge.to};
             nextNodes.push({ ...noda });
         }
     })
@@ -74,13 +77,13 @@ function updateCost(neighborEdges, aNode, neighborNodes){
 };
 
 function getLengthFromTo(fromNode, toNode, neighborEdges) {
-    let pathLength;
+    let edgeOfThePath;
     neighborEdges.forEach((edge) => {
         if(edge.from == fromNode.name && edge.to == toNode.name){
-            pathLength = edge.way;
+            edgeOfThePath = {from: edge.from, to: edge.to, pathLength: edge.way}
         };
     });
-    return pathLength;
+    return edgeOfThePath;
 }
 
 function getNodeByName(name) {
@@ -93,7 +96,6 @@ function getNodeByName(name) {
 
 
 function getLowestNode(allNodes, visitedNodesNames){
-    // console.log(visitedNodesNames)
     let findLowestNode;
     allNodes.sort((a, b) => a.shortestWay - b.shortestWay);
     let x = 0;
@@ -106,6 +108,22 @@ function getLowestNode(allNodes, visitedNodesNames){
         break;
     }
     return findLowestNode;
+}
+
+function findingTheRightPath(allNoda, from, to) {
+    let arrNameOfNode = [];
+    let activeTo = to;
+    arrNameOfNode.unshift(...to)
+    while(activeTo !== from){
+        allNoda.forEach(item => {
+            if(!item.edgeOfThePath) return
+            if(item.edgeOfThePath.to === activeTo){
+                activeTo = item.edgeOfThePath.from;
+                arrNameOfNode.unshift(...activeTo)
+            };
+        });
+    };
+    return arrNameOfNode
 }
 
 
@@ -177,7 +195,7 @@ searcHypotenuse = (firstX, firstY, secondX, secondY) => {
 
 
 
-getWay("A")
+
 
 
 
