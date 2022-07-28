@@ -132,23 +132,6 @@ function findingTheRightPath(allNoda, from, to) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function iteratingOverPaths(array){
     arr = [];
     let odin = 0;
@@ -198,7 +181,45 @@ searcHypotenuse = (firstX, firstY, secondX, secondY) => {
 
 
 
+const rectangleElement = document.querySelector("#rectangle");
+var rectanglePerem = 40;
+rectangleElement.addEventListener("click", clickRectangleShowHandler);
+let rectangleDotsPaint = [];
 
 
 
+function clickRectangleShowHandler(eventRentagle){
+	var newElement = document.createElement("div");
+	newElement.className = "visual-element";
+	newElement.style = `top: ${eventRentagle.layerY}px; left: ${eventRentagle.layerX}px`;
+	rectangleElement.appendChild(newElement);
+	rectanglePerem++;
+	const dot = {top: eventRentagle.layerY, left: eventRentagle.layerX};
+	rectangleDotsPaint.push(dot);
+	if(rectangleDotsPaint.length >= 2){
+		const previousDot = rectangleDotsPaint[rectangleDotsPaint.length - 2];
+        console.log(rectangleDotsPaint)
+		drawLine(dot, previousDot);
+	};
+};
+
+
+function drawLine(a, b){
+	var length = Math.sqrt(((a.top - b.top)*(a.top - b.top))+((a.left - b.left)*(a.left - b.left)));
+	var lengthTouch = Math.round(length);
+	var n = lengthTouch / 10;
+	var nTrue = Math.round(n);
+	var wTrue = (a.left - b.left) / nTrue;
+	var cTrue = (a.top - b.top) / nTrue;
+	var topThisPosition = a.top;
+	var leftThisPosition = a.left;
+	for(x = 0; x < nTrue; x += 1){
+		topThisPosition -= cTrue
+		leftThisPosition -= wTrue;
+		var newElement = document.createElement("div");
+		newElement.className = "visual-element";
+		newElement.style = `top: ${topThisPosition}px; left: ${leftThisPosition}px`;
+		rectangleElement.appendChild(newElement);
+	};
+};
 
