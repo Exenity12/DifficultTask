@@ -1,25 +1,21 @@
-let rawArray = [
-    {x: 0, y: 0, name: "A"},
-    {x: 8, y: 8, name: "B"},
-    {x: 0, y: 3, name: "C"},
-    {x: 2, y: 2, name: "D"},
-];
+var rawArray = "";
 
 var visitedWay = [];
 var allEdges = [];
 var nodes = [];
 
 function getWay(fromName, toWay) {
-    allEdges = iteratingOverPaths(rawArray)
+    allEdges = iteratingOverPaths(rawArray);
     rawArray.forEach((item) => {
         nodes.push({name: item.name, neighborNames: (searchAllNeighbors(item.name)), shortestWay: Infinity, edgeOfThePath: null})
-    })
-    console.log(nodes)
-    console.log(allEdges)
+    });
+    // console.log(nodes)
+    // console.log(allEdges)
     if(!getNodeByName(toWay)) return null;
     let activeNode = getNodeByName(fromName);
     activeNode.shortestWay = 0;
     let allNodes = [ ...nodes];
+    console.log(allNodes)
     while (visitedWay.length !== rawArray.length) {
         const neighborEdges = getNeighborEdges(activeNode.name, allNodes, allEdges);
         const neighborNodes = getNeighborNodes(activeNode.name, allNodes, allEdges);
@@ -113,13 +109,13 @@ function getLowestNode(allNodes, visitedNodesNames){
 function findingTheRightPath(allNoda, from, to) {
     let arrNameOfNode = [];
     let activeTo = to;
-    arrNameOfNode.unshift(...to)
+    arrNameOfNode.unshift(to)
     while(activeTo !== from){
         allNoda.forEach(item => {
             if(!item.edgeOfThePath) return
             if(item.edgeOfThePath.to === activeTo){
                 activeTo = item.edgeOfThePath.from;
-                arrNameOfNode.unshift(...activeTo)
+                arrNameOfNode.unshift(activeTo)
             };
         });
     };
@@ -172,7 +168,7 @@ searcHypotenuse = (firstX, firstY, secondX, secondY) => {
     let y = secondY - firstY;
     let resultInQuad = x * x + y * y;
     let result = Math.sqrt(resultInQuad);
-    if(result > 10) return
+    if(result > 200) return
     return result;
 }
 
@@ -186,40 +182,92 @@ var rectanglePerem = 40;
 rectangleElement.addEventListener("click", clickRectangleShowHandler);
 let rectangleDotsPaint = [];
 
-
-
+let clonEdges = [];
 function clickRectangleShowHandler(eventRentagle){
 	var newElement = document.createElement("div");
 	newElement.className = "visual-element";
 	newElement.style = `top: ${eventRentagle.layerY}px; left: ${eventRentagle.layerX}px`;
-	rectangleElement.appendChild(newElement);
 	rectanglePerem++;
 	const dot = {top: eventRentagle.layerY, left: eventRentagle.layerX};
 	rectangleDotsPaint.push(dot);
-	if(rectangleDotsPaint.length >= 2){
-		const previousDot = rectangleDotsPaint[rectangleDotsPaint.length - 2];
-        console.log(rectangleDotsPaint)
-		drawLine(dot, previousDot);
-	};
+    rawArray = transformationArray(rectangleDotsPaint);
+    let neighborTouch = [];
+    let arrTouch = [];
+    localAllEdges = iteratingOverPaths(rawArray);
+    rawArray.forEach((item) => {
+        arrTouch.push({name: item.name, neighborNames: (searchAllNeighbors(item.name)), shortestWay: Infinity, edgeOfThePath: null})
+    });
+    neighborTouch = arrTouch;
+    clonEdges = [];
+    localAllEdges.forEach(item => {
+        clonEdges.push(item);
+    });
+    let pathsWithoutRepetitions = deleteClone(clonEdges);
+    console.log(pathsWithoutRepetitions)
+    console.log(rawArray)
+    pathsWithoutRepetitions.forEach((edge, index) => {
+        drawLine(findByName(rawArray, edge.from), findByName(rawArray, edge.to), index);
+    })
+};
+
+function findByName(array, name){
+    let item;
+    array.forEach(noda => {
+        if(noda.name === name) item = noda;
+    });
+    return item;
 };
 
 
-function drawLine(a, b){
-	var length = Math.sqrt(((a.top - b.top)*(a.top - b.top))+((a.left - b.left)*(a.left - b.left)));
+function deleteClone(array){
+    let arr;
+    array.forEach((item, index) => {
+        let x = 0;
+        while(x < array.length){
+            if(index !== x){
+                if(array[x].way == item.way){
+                    array.splice(x, 1);
+                    return;
+                };
+            };
+            x++;
+        };
+    });
+    arr = array;
+    return arr;
+};
+
+
+function transformationArray(array){
+    let x = 0;
+    let arr = [];
+    while(x < array.length){
+        arr.push({x: rectangleDotsPaint[x].left, y: rectangleDotsPaint[x].top, name: x},)
+        x++;
+    };
+    return arr;
+};
+
+
+function drawLine(a, b, number){
+	var length = Math.sqrt(((a.y - b.y)*(a.y - b.y))+((a.x - b.x)*(a.x - b.x)));
 	var lengthTouch = Math.round(length);
 	var n = lengthTouch / 10;
 	var nTrue = Math.round(n);
-	var wTrue = (a.left - b.left) / nTrue;
-	var cTrue = (a.top - b.top) / nTrue;
-	var topThisPosition = a.top;
-	var leftThisPosition = a.left;
+	var wTrue = (a.x - b.x) / nTrue;
+	var cTrue = (a.y - b.y) / nTrue;
+	var topThisPosition = a.y;
+	var leftThisPosition = a.x;
+    var newEdge = document.createElement("div");
+    newEdge.id = number;
 	for(x = 0; x < nTrue; x += 1){
 		topThisPosition -= cTrue
 		leftThisPosition -= wTrue;
 		var newElement = document.createElement("div");
 		newElement.className = "visual-element";
 		newElement.style = `top: ${topThisPosition}px; left: ${leftThisPosition}px`;
-		rectangleElement.appendChild(newElement);
+		newEdge.appendChild(newElement);
 	};
+    rectangleElement.appendChild(newEdge);
 };
 
