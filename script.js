@@ -28,6 +28,20 @@ function getWay(fromName, toWay) {
     const resultArray = findingTheRightPath(allNodes, fromName, toWay);
     const result = {wayLength: getNodeByName(toWay).shortestWay, path: resultArray};
     console.log(result)
+    let t = 1;
+    while(t < result.path.length){
+        console.log("id_" + result.path[t - 1] + "_" + result.path[t])
+        if(result.path[t - 1] < result.path[t]) {
+            document.getElementById("id_" + result.path[t - 1] + "_" + result.path[t]).childNodes.forEach(item => {
+                item.style.background = "black"
+            })
+        } else if (result.path[t - 1] > result.path[t]){
+            document.getElementById("id_" + result.path[t] + "_" + result.path[t - 1]).childNodes.forEach(item => {
+                item.style.background = "black"
+            });
+        };
+        t++;
+    }
 };
 
 function getUpdatedAllNodes(nextNodes, nodes) {
@@ -176,23 +190,35 @@ searcHypotenuse = (firstX, firstY, secondX, secondY) => {
 
 
 
-
+const numberNeibor = document.querySelector("#numberNeibor");
 const rectangleElement = document.querySelector("#rectangle");
 var rectanglePerem = 40;
 rectangleElement.addEventListener("click", clickRectangleShowHandler);
 let rectangleDotsPaint = [];
 
 let clonEdges = [];
+var countNumber = 0;
+let localAllEdges = [];
+let numberClick = 0;
+
 function clickRectangleShowHandler(eventRentagle){
-	var newElement = document.createElement("div");
-	newElement.className = "visual-element";
-	newElement.style = `top: ${eventRentagle.layerY}px; left: ${eventRentagle.layerX}px`;
+    console.log(numberClick)
+    let numbreNeighborEdges = document.createElement("div");
+    numbreNeighborEdges.className = "visual-element-neighbor";
+    numbreNeighborEdges.innerHTML = numberClick
+    numbreNeighborEdges.style = `top: ${eventRentagle.layerY + 200}px; left: ${eventRentagle.layerX + 300}px`;
+    numberNeibor.appendChild(numbreNeighborEdges);
+    numberClick++;
+    let arrayEldenEdge = [];
 	rectanglePerem++;
 	const dot = {top: eventRentagle.layerY, left: eventRentagle.layerX};
 	rectangleDotsPaint.push(dot);
     rawArray = transformationArray(rectangleDotsPaint);
     let neighborTouch = [];
     let arrTouch = [];
+    localAllEdges.forEach(item => {
+        arrayEldenEdge.push(item);
+    });
     localAllEdges = iteratingOverPaths(rawArray);
     rawArray.forEach((item) => {
         arrTouch.push({name: item.name, neighborNames: (searchAllNeighbors(item.name)), shortestWay: Infinity, edgeOfThePath: null})
@@ -202,13 +228,32 @@ function clickRectangleShowHandler(eventRentagle){
     localAllEdges.forEach(item => {
         clonEdges.push(item);
     });
-    let pathsWithoutRepetitions = deleteClone(clonEdges);
-    console.log(pathsWithoutRepetitions)
-    console.log(rawArray)
-    pathsWithoutRepetitions.forEach((edge, index) => {
-        drawLine(findByName(rawArray, edge.from), findByName(rawArray, edge.to), index);
+    // console.log(deleteClone(localAllEdges))
+    // console.log(deleteClone(arrayEldenEdge))
+    findTheDifferences(deleteClone(localAllEdges), deleteClone(arrayEldenEdge)).forEach((edge) => {
+        drawLine(findByName(rawArray, edge.from), findByName(rawArray, edge.to), edge.from, edge.to);
     })
 };
+
+
+function findTheDifferences(a, b){
+    let arr = [];
+    let x = 0;
+    while(x < a.length){
+        let y = 0;
+        let nonIsClone = true
+        while(y < b.length){
+            if(Math.floor(a[x].way) === Math.floor(b[y].way)) {
+                nonIsClone = false
+            }
+            y++;
+        };
+        if(nonIsClone) arr.push(a[x])
+        x++;
+        };
+    return arr;
+};
+
 
 function findByName(array, name){
     let item;
@@ -249,7 +294,7 @@ function transformationArray(array){
 };
 
 
-function drawLine(a, b, number){
+function drawLine(a, b, from, to){
 	var length = Math.sqrt(((a.y - b.y)*(a.y - b.y))+((a.x - b.x)*(a.x - b.x)));
 	var lengthTouch = Math.round(length);
 	var n = lengthTouch / 10;
@@ -259,7 +304,7 @@ function drawLine(a, b, number){
 	var topThisPosition = a.y;
 	var leftThisPosition = a.x;
     var newEdge = document.createElement("div");
-    newEdge.id = number;
+    newEdge.id = "id_" + from + "_" + to
 	for(x = 0; x < nTrue; x += 1){
 		topThisPosition -= cTrue
 		leftThisPosition -= wTrue;
@@ -270,4 +315,3 @@ function drawLine(a, b, number){
 	};
     rectangleElement.appendChild(newEdge);
 };
-
