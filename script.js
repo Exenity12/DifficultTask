@@ -9,8 +9,6 @@ function getWay(fromName, toWay) {
     rawArray.forEach((item) => {
         nodes.push({name: item.name, neighborNames: (searchAllNeighbors(item.name)), shortestWay: Infinity, edgeOfThePath: null})
     });
-    // console.log(nodes)
-    // console.log(allEdges)
     if(!getNodeByName(toWay)) return null;
     let activeNode = getNodeByName(fromName);
     activeNode.shortestWay = 0;
@@ -104,7 +102,6 @@ function getNodeByName(name) {
     return findNoda
 }
 
-
 function getLowestNode(allNodes, visitedNodesNames){
     let findLowestNode;
     allNodes.sort((a, b) => a.shortestWay - b.shortestWay);
@@ -135,12 +132,6 @@ function findingTheRightPath(allNoda, from, to) {
     };
     return arrNameOfNode
 }
-
-
-
-
-
-
 
 function iteratingOverPaths(array){
     arr = [];
@@ -187,9 +178,6 @@ searcHypotenuse = (firstX, firstY, secondX, secondY) => {
 }
 
 
-
-
-
 const numberNeibor = document.querySelector("#numberNeibor");
 const rectangleElement = document.querySelector("#rectangle");
 var rectanglePerem = 40;
@@ -202,7 +190,6 @@ let localAllEdges = [];
 let numberClick = 0;
 
 function clickRectangleShowHandler(eventRentagle){
-    console.log(numberClick)
     let numbreNeighborEdges = document.createElement("div");
     numbreNeighborEdges.className = "visual-element-neighbor";
     numbreNeighborEdges.innerHTML = numberClick
@@ -228,13 +215,10 @@ function clickRectangleShowHandler(eventRentagle){
     localAllEdges.forEach(item => {
         clonEdges.push(item);
     });
-    // console.log(deleteClone(localAllEdges))
-    // console.log(deleteClone(arrayEldenEdge))
     findTheDifferences(deleteClone(localAllEdges), deleteClone(arrayEldenEdge)).forEach((edge) => {
         drawLine(findByName(rawArray, edge.from), findByName(rawArray, edge.to), edge.from, edge.to);
     })
 };
-
 
 function findTheDifferences(a, b){
     let arr = [];
@@ -254,7 +238,6 @@ function findTheDifferences(a, b){
     return arr;
 };
 
-
 function findByName(array, name){
     let item;
     array.forEach(noda => {
@@ -262,7 +245,6 @@ function findByName(array, name){
     });
     return item;
 };
-
 
 function deleteClone(array){
     let arr;
@@ -282,7 +264,6 @@ function deleteClone(array){
     return arr;
 };
 
-
 function transformationArray(array){
     let x = 0;
     let arr = [];
@@ -292,7 +273,6 @@ function transformationArray(array){
     };
     return arr;
 };
-
 
 function drawLine(a, b, from, to){
 	var length = Math.sqrt(((a.y - b.y)*(a.y - b.y))+((a.x - b.x)*(a.x - b.x)));
