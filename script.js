@@ -1,10 +1,20 @@
-var rawArray = "";
+let rawArray = "";
+let visitedWay = [];
+let allEdges = [];
+let nodes = [];
 
-var visitedWay = [];
-var allEdges = [];
-var nodes = [];
+const lengthOfHypotemuse = 300;//// длина путей между точками
+
+console.log(`Для использования алгоритма: 
+    1) на поле поставить необходимое кол-во точек
+    2) в консоли запустить функцию getWay(fromName, toWay), где fromName - начало пути, toWay - конец пути
+    3) самый короткий путь покрасится в черный цвет, в консоли будет дополнительная информация`);
 
 function getWay(fromName, toWay) {
+    let allNodes = [];
+    nodes = [];
+    visitedWay = [];
+    allEdges = [];
     allEdges = iteratingOverPaths(rawArray);
     rawArray.forEach((item) => {
         nodes.push({name: item.name, neighborNames: (searchAllNeighbors(item.name)), shortestWay: Infinity, edgeOfThePath: null})
@@ -12,7 +22,7 @@ function getWay(fromName, toWay) {
     if(!getNodeByName(toWay)) return null;
     let activeNode = getNodeByName(fromName);
     activeNode.shortestWay = 0;
-    let allNodes = [ ...nodes];
+    allNodes = [ ...nodes];
     console.log(allNodes)
     while (visitedWay.length !== rawArray.length) {
         const neighborEdges = getNeighborEdges(activeNode.name, allNodes, allEdges);
@@ -173,7 +183,7 @@ searcHypotenuse = (firstX, firstY, secondX, secondY) => {
     let y = secondY - firstY;
     let resultInQuad = x * x + y * y;
     let result = Math.sqrt(resultInQuad);
-    if(result > 200) return
+    if(result > lengthOfHypotemuse) return
     return result;
 }
 
@@ -193,7 +203,7 @@ function clickRectangleShowHandler(eventRentagle){
     let numbreNeighborEdges = document.createElement("div");
     numbreNeighborEdges.className = "visual-element-neighbor";
     numbreNeighborEdges.innerHTML = numberClick
-    numbreNeighborEdges.style = `top: ${eventRentagle.layerY + 200}px; left: ${eventRentagle.layerX + 300}px`;
+    numbreNeighborEdges.style = `top: ${eventRentagle.layerY + 100}px; left: ${eventRentagle.layerX + 200}px`;
     numberNeibor.appendChild(numbreNeighborEdges);
     numberClick++;
     let arrayEldenEdge = [];
